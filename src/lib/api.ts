@@ -74,6 +74,33 @@ class ApiClient {
     return this.request(`/api/metrics/batch?account_id=${accountId}`, { method: 'POST' });
   }
 
+  async createMetric(data: {
+    account_id: string;
+    name: string;
+    key: string;
+    data_type: 'integer' | 'decimal' | 'percentage' | 'text';
+    emoji?: string;
+    display_order?: number;
+    is_required?: boolean;
+    show_trend?: boolean;
+  }): Promise<MetricDefinition> {
+    return this.request('/api/metrics', { method: 'POST', body: JSON.stringify(data) });
+  }
+
+  async updateMetric(id: string, data: Partial<{
+    name: string;
+    emoji: string;
+    display_order: number;
+    is_required: boolean;
+    show_trend: boolean;
+  }>): Promise<MetricDefinition> {
+    return this.request(`/api/metrics/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+  }
+
+  async deleteMetric(id: string): Promise<void> {
+    return this.request(`/api/metrics/${id}`, { method: 'DELETE' });
+  }
+
   // Dashboard
   async getDashboard(date?: string, accountId?: string): Promise<AccountDashboard[]> {
     const params = new URLSearchParams();
