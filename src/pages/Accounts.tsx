@@ -143,6 +143,7 @@ export default function Accounts() {
                 <option value="Australia/Brisbane">Australia/Brisbane (AEST)</option>
                 <option value="Australia/Perth">Australia/Perth (AWST)</option>
                 <option value="Pacific/Auckland">Pacific/Auckland (NZDT)</option>
+                <option value="Africa/Johannesburg">Africa/Johannesburg (SAST)</option>
                 <option value="Asia/Singapore">Asia/Singapore (SGT)</option>
                 <option value="Asia/Hong_Kong">Asia/Hong Kong (HKT)</option>
                 <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
