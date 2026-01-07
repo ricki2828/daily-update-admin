@@ -119,6 +119,7 @@ export default function Accounts() {
                 onChange={(e) => setFormData({ ...formData, prompt_time: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
+              <p className="text-xs text-gray-500 mt-1">Time when daily prompts are sent ({formData.timezone})</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Deadline Time</label>
@@ -128,6 +129,28 @@ export default function Accounts() {
                 onChange={(e) => setFormData({ ...formData, deadline_time: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
+              <p className="text-xs text-gray-500 mt-1">Time when submissions are due ({formData.timezone})</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Timezone</label>
+              <select
+                value={formData.timezone}
+                onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="Australia/Sydney">Australia/Sydney (AEDT)</option>
+                <option value="Australia/Melbourne">Australia/Melbourne (AEDT)</option>
+                <option value="Australia/Brisbane">Australia/Brisbane (AEST)</option>
+                <option value="Australia/Perth">Australia/Perth (AWST)</option>
+                <option value="Pacific/Auckland">Pacific/Auckland (NZDT)</option>
+                <option value="Asia/Singapore">Asia/Singapore (SGT)</option>
+                <option value="Asia/Hong_Kong">Asia/Hong Kong (HKT)</option>
+                <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
+                <option value="Europe/London">Europe/London (GMT/BST)</option>
+                <option value="America/New_York">America/New York (EST/EDT)</option>
+                <option value="America/Los_Angeles">America/Los Angeles (PST/PDT)</option>
+              </select>
+              <p className="text-xs text-gray-500 mt-1">All times are in this timezone</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Reminder Interval (minutes)</label>
