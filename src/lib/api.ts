@@ -1,4 +1,4 @@
-import type { Account, AccountCreate, TeamLeader, TeamLeaderCreate, MetricDefinition, AccountDashboard } from '../types';
+import type { Account, AccountCreate, TeamLeader, TeamLeaderCreate, Agent, AgentCreate, AgentDetail, MetricDefinition, AccountDashboard, AgentReport } from '../types';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://daily-update-api.azurewebsites.net';
 
@@ -65,6 +65,31 @@ class ApiClient {
     return this.request(`/api/team-leaders/${id}`, { method: 'DELETE' });
   }
 
+  // Agents
+  async getAgents(accountId?: string, teamLeaderId?: string): Promise<Agent[]> {
+    const params = new URLSearchParams();
+    if (accountId) params.set('account_id', accountId);
+    if (teamLeaderId) params.set('team_leader_id', teamLeaderId);
+    const query = params.toString() ? `?${params.toString()}` : '';
+    return this.request(`/api/agents${query}`);
+  }
+
+  async getAgent(id: string): Promise<AgentDetail> {
+    return this.request(`/api/agents/${id}`);
+  }
+
+  async createAgent(data: AgentCreate): Promise<Agent> {
+    return this.request('/api/agents', { method: 'POST', body: JSON.stringify(data) });
+  }
+
+  async updateAgent(id: string, data: Partial<AgentCreate>): Promise<Agent> {
+    return this.request(`/api/agents/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+  }
+
+  async deleteAgent(id: string): Promise<void> {
+    return this.request(`/api/agents/${id}`, { method: 'DELETE' });
+  }
+
   // Metrics
   async getMetrics(accountId: string): Promise<MetricDefinition[]> {
     return this.request(`/api/metrics?account_id=${accountId}`);
@@ -108,6 +133,16 @@ class ApiClient {
     if (accountId) params.set('account_id', accountId);
     const query = params.toString() ? `?${params.toString()}` : '';
     return this.request(`/api/analytics/dashboard${query}`);
+  }
+
+  // Agent Report
+  async getAgentReport(date?: string, accountId?: string, teamLeaderId?: string): Promise<AgentReport> {
+    const params = new URLSearchParams();
+    if (date) params.set('target_date', date);
+    if (accountId) params.set('account_id', accountId);
+    if (teamLeaderId) params.set('team_leader_id', teamLeaderId);
+    const query = params.toString() ? `?${params.toString()}` : '';
+    return this.request(`/api/analytics/agent-report${query}`);
   }
 
   // Export URLs

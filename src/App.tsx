@@ -1,8 +1,10 @@
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Building2, Users, Download, Settings, BarChart3 } from 'lucide-react'
+import { LayoutDashboard, Building2, Users, UserCheck, Download, Settings, BarChart3, FileBarChart } from 'lucide-react'
 import Dashboard from './pages/Dashboard'
 import Accounts from './pages/Accounts'
 import TeamLeaders from './pages/TeamLeaders'
+import Agents from './pages/Agents'
+import AgentReport from './pages/AgentReport'
 import Metrics from './pages/Metrics'
 import Exports from './pages/Exports'
 
@@ -10,6 +12,8 @@ const navItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/accounts', label: 'Accounts', icon: Building2 },
   { path: '/team-leaders', label: 'Team Leaders', icon: Users },
+  { path: '/agents', label: 'Agents', icon: UserCheck },
+  { path: '/agent-report', label: 'Agent Report', icon: FileBarChart },
   { path: '/metrics', label: 'Metrics', icon: BarChart3 },
   { path: '/exports', label: 'Exports', icon: Download },
 ]
@@ -64,6 +68,8 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/accounts" element={<Accounts />} />
             <Route path="/team-leaders" element={<TeamLeaders />} />
+            <Route path="/agents" element={<Agents />} />
+            <Route path="/agent-report" element={<AgentReport />} />
             <Route path="/metrics" element={<Metrics />} />
             <Route path="/exports" element={<Exports />} />
           </Routes>

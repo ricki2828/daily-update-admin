@@ -206,6 +206,7 @@ export default function Accounts() {
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Account</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Schedule</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Team Leaders</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Agents</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Metrics</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                 <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -224,6 +225,7 @@ export default function Accounts() {
                     {account.prompt_time} - {account.deadline_time}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">{account.team_leader_count}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{account.agent_count || 0}</td>
                   <td className="px-6 py-4">
                     <span className="text-sm text-gray-900">{account.metric_count}</span>
                     {account.metric_count === 0 && (
@@ -254,7 +256,7 @@ export default function Accounts() {
               ))}
               {accounts.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
                     No accounts yet. Click "Add Account" to create one.
                   </td>
                 </tr>
