@@ -95,7 +95,7 @@ export interface DailyUpdateDetail extends DailyUpdate {
 export interface Agent {
   id: string;
   name: string;
-  email: string;
+  email?: string;
   employee_id?: string;
   account_id: string;
   team_leader_id: string;
@@ -106,7 +106,7 @@ export interface Agent {
 
 export interface AgentCreate {
   name: string;
-  email: string;
+  email?: string;
   employee_id?: string;
   account_id: string;
   team_leader_id: string;

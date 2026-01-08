@@ -181,14 +181,13 @@ export default function Agents() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
               <input
                 type="email"
-                required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                placeholder="jane@company.com"
+                placeholder="jane@company.com (optional)"
               />
             </div>
             <div>
@@ -271,7 +270,7 @@ export default function Agents() {
               {agents.map((agent) => (
                 <tr key={agent.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 font-medium text-gray-900">{agent.name}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{agent.email}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500">{agent.email || '-'}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{agent.employee_id || '-'}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">{getTeamLeaderName(agent.team_leader_id)}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">{getAccountName(agent.account_id)}</td>
