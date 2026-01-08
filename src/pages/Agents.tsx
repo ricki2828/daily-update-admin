@@ -75,6 +75,7 @@ export default function Agents() {
     try {
       const submitData = {
         ...formData,
+        email: formData.email || undefined,
         employee_id: formData.employee_id || undefined,
       }
       await api.createAgent(submitData)
