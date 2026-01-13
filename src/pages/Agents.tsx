@@ -108,7 +108,7 @@ export default function Agents() {
   }
 
   const availableTeamLeaders = formData.account_id
-    ? teamLeaders.filter(tl => tl.account_id === formData.account_id)
+    ? teamLeaders.filter(tl => tl.account_ids.includes(formData.account_id))
     : []
 
   return (
@@ -157,7 +157,7 @@ export default function Agents() {
             >
               <option value="">All Team Leaders</option>
               {teamLeaders
-                .filter(tl => !selectedAccount || tl.account_id === selectedAccount)
+                .filter(tl => !selectedAccount || tl.account_ids.includes(selectedAccount))
                 .map(leader => (
                   <option key={leader.id} value={leader.id}>{leader.name}</option>
                 ))}

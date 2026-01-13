@@ -13,7 +13,7 @@ export default function TeamLeaders() {
   const [formData, setFormData] = useState<TeamLeaderCreate>({
     name: '',
     email: '',
-    account_id: '',
+    account_ids: [],
   })
 
   useEffect(() => {
@@ -54,14 +54,27 @@ export default function TeamLeaders() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (formData.account_ids.length === 0) {
+      setError('Please select at least one account')
+      return
+    }
     try {
       await api.createTeamLeader(formData)
       setShowForm(false)
-      setFormData({ name: '', email: '', account_id: '' })
+      setFormData({ name: '', email: '', account_ids: [] })
       loadTeamLeaders(selectedAccount)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create team leader')
     }
+  }
+
+  const toggleAccount = (accountId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      account_ids: prev.account_ids.includes(accountId)
+        ? prev.account_ids.filter(id => id !== accountId)
+        : [...prev.account_ids, accountId]
+    }))
   }
 
   async function handleDelete(id: string) {
@@ -74,9 +87,11 @@ export default function TeamLeaders() {
     }
   }
 
-  const getAccountName = (accountId: string) => {
-    const account = accounts.find(a => a.id === accountId)
-    return account ? account.name : accountId
+  const getAccountNames = (accountIds: string[]) => {
+    return accountIds.map(id => {
+      const account = accounts.find(a => a.id === id)
+      return account ? account.name : id
+    }).join(', ')
   }
 
   return (
@@ -115,44 +130,54 @@ export default function TeamLeaders() {
       {showForm && (
         <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
           <h2 className="text-lg font-semibold mb-4">New Team Leader</h2>
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-              <input
-                type="text"
-                required
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                placeholder="John Smith"
-              />
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="John Smith"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="john@company.com"
+                />
+              </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input
-                type="email"
-                required
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                placeholder="john@company.com"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Account</label>
-              <select
-                required
-                value={formData.account_id}
-                onChange={(e) => setFormData({ ...formData, account_id: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select Account</option>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Accounts <span className="text-red-600">*</span>
+              </label>
+              <div className="border border-gray-300 rounded-lg p-3 space-y-2 max-h-48 overflow-y-auto">
                 {accounts.map(account => (
-                  <option key={account.id} value={account.id}>{account.name}</option>
+                  <label key={account.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                    <input
+                      type="checkbox"
+                      checked={formData.account_ids.includes(account.id)}
+                      onChange={() => toggleAccount(account.id)}
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-gray-700">{account.name} ({account.code})</span>
+                  </label>
                 ))}
-              </select>
+                {accounts.length === 0 && (
+                  <p className="text-sm text-gray-500 text-center py-2">No accounts available</p>
+                )}
+              </div>
+              <p className="text-xs text-gray-500 mt-1">Select at least one account</p>
             </div>
-            <div className="md:col-span-3 flex gap-4">
+            <div className="flex gap-4">
               <button
                 type="submit"
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -193,7 +218,7 @@ export default function TeamLeaders() {
                 <tr key={leader.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 font-medium text-gray-900">{leader.name}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{leader.email}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{getAccountName(leader.account_id)}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{getAccountNames(leader.account_ids)}</td>
                   <td className="px-6 py-4">
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                       leader.teams_user_id ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'

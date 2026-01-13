@@ -80,7 +80,7 @@ export default function AgentReport() {
 
   // Filter team leaders by selected account
   const filteredTeamLeaders = selectedAccount
-    ? teamLeaders.filter(tl => tl.account_id === selectedAccount)
+    ? teamLeaders.filter(tl => tl.account_ids.includes(selectedAccount))
     : teamLeaders
 
   return (

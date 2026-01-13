@@ -1,19 +1,23 @@
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Building2, Users, UserCheck, Download, Settings, BarChart3, FileBarChart } from 'lucide-react'
+import { LayoutDashboard, Building2, Users, UserCheck, Download, Settings, BarChart3, FileBarChart, History, Send } from 'lucide-react'
 import Dashboard from './pages/Dashboard'
 import Accounts from './pages/Accounts'
 import TeamLeaders from './pages/TeamLeaders'
 import Agents from './pages/Agents'
 import AgentReport from './pages/AgentReport'
+import HistoricMetrics from './pages/HistoricMetrics'
 import Metrics from './pages/Metrics'
 import Exports from './pages/Exports'
+import SubmitUpdate from './pages/SubmitUpdate'
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { path: '/submit', label: 'Submit Update', icon: Send },
   { path: '/accounts', label: 'Accounts', icon: Building2 },
   { path: '/team-leaders', label: 'Team Leaders', icon: Users },
   { path: '/agents', label: 'Agents', icon: UserCheck },
   { path: '/agent-report', label: 'Agent Report', icon: FileBarChart },
+  { path: '/historic-metrics', label: 'Edit Historic', icon: History },
   { path: '/metrics', label: 'Metrics', icon: BarChart3 },
   { path: '/exports', label: 'Exports', icon: Download },
 ]
@@ -66,10 +70,12 @@ function App() {
         <main className="flex-1 ml-64 p-8">
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/submit" element={<SubmitUpdate />} />
             <Route path="/accounts" element={<Accounts />} />
             <Route path="/team-leaders" element={<TeamLeaders />} />
             <Route path="/agents" element={<Agents />} />
             <Route path="/agent-report" element={<AgentReport />} />
+            <Route path="/historic-metrics" element={<HistoricMetrics />} />
             <Route path="/metrics" element={<Metrics />} />
             <Route path="/exports" element={<Exports />} />
           </Routes>

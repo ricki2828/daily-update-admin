@@ -16,6 +16,7 @@ export default function Accounts() {
     reminder_interval_minutes: 60,
     max_reminders: 3,
     timezone: 'Australia/Sydney',
+    default_metric_date_offset: 0,
   })
 
   useEffect(() => {
@@ -39,7 +40,7 @@ export default function Accounts() {
     try {
       await api.createAccount(formData)
       setShowForm(false)
-      setFormData({ name: '', code: '', prompt_time: '09:00', deadline_time: '17:00', reminder_interval_minutes: 60, max_reminders: 3, timezone: 'Australia/Sydney' })
+      setFormData({ name: '', code: '', prompt_time: '09:00', deadline_time: '17:00', reminder_interval_minutes: 60, max_reminders: 3, timezone: 'Australia/Sydney', default_metric_date_offset: 0 })
       loadAccounts()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create account')
@@ -152,6 +153,19 @@ export default function Accounts() {
                 <option value="America/Los_Angeles">America/Los Angeles (PST/PDT)</option>
               </select>
               <p className="text-xs text-gray-500 mt-1">All times are in this timezone</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Default Reporting Date</label>
+              <select
+                value={formData.default_metric_date_offset}
+                onChange={(e) => setFormData({ ...formData, default_metric_date_offset: parseInt(e.target.value) })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="0">Same day - Figures are for today</option>
+                <option value="-1">Previous day - Figures are for yesterday</option>
+                <option value="-2">Two days ago</option>
+              </select>
+              <p className="text-xs text-gray-500 mt-1">Agents can override this when submitting metrics</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Reminder Interval (minutes)</label>

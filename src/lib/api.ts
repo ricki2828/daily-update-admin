@@ -1,4 +1,4 @@
-import type { Account, AccountCreate, TeamLeader, TeamLeaderCreate, Agent, AgentCreate, AgentDetail, MetricDefinition, AccountDashboard, AgentReport } from '../types';
+import type { Account, AccountCreate, TeamLeader, TeamLeaderCreate, Agent, AgentCreate, AgentDetail, MetricDefinition, AccountDashboard, AgentReport, HistoricDataResponse, MetricValueUpdate, BulkUpdateEntry, AuditLogEntry, DirectSubmitRequest, DailyUpdateDetail } from '../types';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://daily-update-api.azurewebsites.net';
 
@@ -103,7 +103,7 @@ class ApiClient {
     account_id: string;
     name: string;
     key: string;
-    data_type: 'integer' | 'decimal' | 'percentage' | 'text';
+    data_type: 'integer' | 'decimal' | 'percentage' | 'text' | 'duration';
     emoji?: string;
     display_order?: number;
     is_required?: boolean;
@@ -152,6 +152,39 @@ class ApiClient {
       : `/api/analytics/export/weekly/excel`;
     const query = date ? `?target_date=${date}` : '';
     return `${this.baseUrl}${endpoint}${query}`;
+  }
+
+  // Historic Metrics Editor
+  async getHistoricMetrics(accountId: string, date: string, teamLeaderId?: string): Promise<HistoricDataResponse[]> {
+    const params = new URLSearchParams({ account_id: accountId, target_date: date });
+    if (teamLeaderId) params.set('team_leader_id', teamLeaderId);
+    return this.request(`/api/metrics/values/historic?${params.toString()}`);
+  }
+
+  async updateMetricValue(valueId: string, data: MetricValueUpdate): Promise<{ id: string; value_numeric?: number; value_text?: string; updated: boolean }> {
+    return this.request(`/api/metrics/values/${valueId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async bulkUpdateMetricValues(updates: BulkUpdateEntry[]): Promise<{ updated_count: number; success: boolean }> {
+    return this.request('/api/metrics/values/bulk', {
+      method: 'PUT',
+      body: JSON.stringify({ updates }),
+    });
+  }
+
+  async getDateAuditLog(date: string, accountId: string): Promise<AuditLogEntry[]> {
+    return this.request(`/api/metrics/audit/date/${date}?account_id=${accountId}`);
+  }
+
+  // Submit Update
+  async submitUpdate(data: DirectSubmitRequest): Promise<DailyUpdateDetail> {
+    return this.request('/api/updates/submit-for-date', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   }
 }
 

@@ -8,6 +8,7 @@ export interface Account {
   reminder_interval_minutes: number;
   max_reminders: number;
   timezone: string;
+  default_metric_date_offset: number;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -24,6 +25,7 @@ export interface AccountCreate {
   reminder_interval_minutes?: number;
   max_reminders?: number;
   timezone?: string;
+  default_metric_date_offset?: number;
 }
 
 // Team Leader types
@@ -31,7 +33,7 @@ export interface TeamLeader {
   id: string;
   name: string;
   email: string;
-  account_id: string;
+  account_ids: string[];
   manager_id?: string;
   teams_user_id?: string;
   teams_conversation_id?: string;
@@ -43,7 +45,7 @@ export interface TeamLeader {
 export interface TeamLeaderCreate {
   name: string;
   email: string;
-  account_id: string;
+  account_ids: string[];
   manager_id?: string;
 }
 
@@ -53,7 +55,7 @@ export interface MetricDefinition {
   account_id: string;
   name: string;
   key: string;
-  data_type: 'integer' | 'decimal' | 'percentage' | 'text';
+  data_type: 'integer' | 'decimal' | 'percentage' | 'text' | 'duration';
   is_required: boolean;
   display_order: number;
   emoji?: string;
@@ -172,4 +174,88 @@ export interface AgentMetricSummary {
 export interface AgentReport {
   aggregated: AggregatedMetrics;
   agents: AgentMetricSummary[];
+}
+
+// Historic Metrics Editor types
+export interface HistoricMetricEntry {
+  id: string;
+  agent_id: string;
+  agent_name: string;
+  agent_email?: string;
+  metric_definition_id: string;
+  metric_key: string;
+  metric_name: string;
+  data_type: 'integer' | 'decimal' | 'percentage' | 'text' | 'duration';
+  emoji?: string;
+  value_numeric?: number;
+  value_text?: string;
+  created_at: string;
+}
+
+export interface HistoricDataResponse {
+  date: string;
+  account_id: string;
+  account_name: string;
+  account_code: string;
+  daily_update_id: string;
+  team_leader_id: string;
+  team_leader_name: string;
+  metrics: HistoricMetricEntry[];
+  aggregated_totals: Record<string, number>;
+  metric_definitions: MetricDefinition[];
+}
+
+export interface MetricValueUpdate {
+  value_numeric?: number;
+  value_text?: string;
+}
+
+export interface BulkUpdateEntry {
+  id: string;
+  value_numeric?: number;
+  value_text?: string;
+}
+
+export interface AuditLogEntry {
+  id: string;
+  entity_type: string;
+  entity_id: string;
+  action: string;
+  performed_by?: string;
+  details?: {
+    old_value?: { value_numeric?: number; value_text?: string };
+    new_value?: { value_numeric?: number; value_text?: string };
+    metric_key?: string;
+    metric_name?: string;
+    agent_name?: string;
+    changes?: Array<{
+      id: string;
+      metric_key: string;
+      metric_name: string;
+      agent_name?: string;
+      old_value: { value_numeric?: number; value_text?: string };
+      new_value: { value_numeric?: number; value_text?: string };
+    }>;
+    update_count?: number;
+  };
+  created_at: string;
+}
+
+// Per-agent submission types
+export interface MetricValueSubmit {
+  metric_definition_id: string;
+  value: number | string;
+}
+
+export interface AgentMetricSubmission {
+  agent_id: string;
+  metrics: MetricValueSubmit[];
+}
+
+export interface DirectSubmitRequest {
+  team_leader_id: string;
+  account_id: string;
+  date: string;
+  agent_submissions: AgentMetricSubmission[];
+  notes?: string;
 }

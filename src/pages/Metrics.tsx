@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
-import { Plus, Edit2, Trash2, Save, X } from 'lucide-react'
+import { useEffect, useState, useRef } from 'react'
+import { Plus, Edit2, Trash2, Save, X, Smile } from 'lucide-react'
+import EmojiPicker, { EmojiClickData } from 'emoji-picker-react'
 import api from '../lib/api'
 import type { Account, MetricDefinition } from '../types'
 
@@ -14,12 +15,14 @@ export default function Metrics() {
   const [formData, setFormData] = useState({
     name: '',
     key: '',
-    data_type: 'integer' as 'integer' | 'decimal' | 'percentage' | 'text',
+    data_type: 'integer' as 'integer' | 'decimal' | 'percentage' | 'text' | 'duration',
     emoji: '',
     display_order: 10,
     is_required: true,
     show_trend: true,
   })
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+  const emojiPickerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     loadAccounts()
@@ -30,6 +33,19 @@ export default function Metrics() {
       loadMetrics()
     }
   }, [selectedAccountId])
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target as Node)) {
+        setShowEmojiPicker(false)
+      }
+    }
+
+    if (showEmojiPicker) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showEmojiPicker])
 
   async function loadAccounts() {
     try {
@@ -128,6 +144,11 @@ export default function Metrics() {
     setShowForm(false)
     setEditingId(null)
     resetForm()
+  }
+
+  function handleEmojiClick(emojiData: EmojiClickData) {
+    setFormData({ ...formData, emoji: emojiData.emoji })
+    setShowEmojiPicker(false)
   }
 
   const selectedAccount = accounts.find(a => a.id === selectedAccountId)
@@ -237,20 +258,43 @@ export default function Metrics() {
                 <option value="decimal">Decimal (with decimals)</option>
                 <option value="percentage">Percentage (%)</option>
                 <option value="text">Text (free-form)</option>
+                <option value="duration">Duration (HH:MM:SS)</option>
               </select>
               <p className="text-xs text-gray-500 mt-1">Cannot be changed after creation.</p>
             </div>
-            <div>
+            <div className="relative">
               <label className="block text-sm font-medium text-gray-700 mb-1">Emoji</label>
-              <input
-                type="text"
-                value={formData.emoji}
-                onChange={(e) => setFormData({ ...formData, emoji: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                placeholder="📊"
-                maxLength={2}
-              />
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                  className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors w-full"
+                >
+                  {formData.emoji ? (
+                    <span className="text-2xl">{formData.emoji}</span>
+                  ) : (
+                    <>
+                      <Smile className="w-5 h-5 text-gray-400" />
+                      <span className="text-gray-500">Choose emoji</span>
+                    </>
+                  )}
+                </button>
+                {formData.emoji && (
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, emoji: '' })}
+                    className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
               <p className="text-xs text-gray-500 mt-1">Single emoji for display</p>
+              {showEmojiPicker && (
+                <div ref={emojiPickerRef} className="absolute z-50 mt-2">
+                  <EmojiPicker onEmojiClick={handleEmojiClick} />
+                </div>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Display Order</label>
